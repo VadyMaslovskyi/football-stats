@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model monthPlayers {
+  monthId      Int
+  playerId     Int
+  points       Int?     @default(0)
+  starts       Int?     @default(0)
+  subs         Int?     @default(0)
+  goals        Int?     @default(0)
+  ownGoals     Int?     @default(0)
+  assists      Int?     @default(0)
+  concedes     Int?     @default(0)
+  cleansheets  Int?     @default(0)
+  redCards     Int?     @default(0)
+  yellowCards  Int?     @default(0)
+  penSaves     Int?     @default(0)
+  penMisses    Int?     @default(0)
+  savesTier1   Int?     @default(0)
+  savesTier2   Int?     @default(0)
+  passesTier1  Int?     @default(0)
+  passesTier2  Int?     @default(0)
+  tacklesTier1 Int?     @default(0)
+  tacklesTier2 Int?     @default(0)
+  shotsTier1   Int?     @default(0)
+  shotsTier2   Int?     @default(0)
+  motms        Int?     @default(0)
+  added        DateTime @db.DateTime(0)
+  updated      DateTime @db.DateTime(0)
+  players      players  @relation(fields: [playerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_month_players_players_playerId")
+
+  @@id([monthId, playerId])
+  @@index([monthId], map: "monthId_idx")
+  @@index([playerId], map: "playerId_idx")
+}
+
+model players {
+  id            Int               @id @default(autoincrement())
+  uuid          String            @unique(map: "uuid_UNIQUE") @db.VarChar(45)
+  teamId        Int?              @default(0)
+  firstName     String?           @db.VarChar(128)
+  lastName      String?           @db.VarChar(128)
+  position      players_position?
+  added         DateTime          @db.DateTime(0)
+  updated       DateTime          @db.DateTime(0)
+  monthPlayers  monthPlayers[]
+  teams         teams?            @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_players_teams_teamId")
+  seasonPlayers seasonPlayers?
+  weekPlayers   weekPlayers[]
+
+  @@index([teamId], map: "teamId_idx")
+}
+
+model seasonPlayers {
+  playerId     Int      @id
+  points       Int?     @default(0)
+  starts       Int?     @default(0)
+  subs         Int?     @default(0)
+  goals        Int?     @default(0)
+  ownGoals     Int?     @default(0)
+  assists      Int?     @default(0)
+  concedes     Int?     @default(0)
+  cleansheets  Int?     @default(0)
+  redCards     Int?     @default(0)
+  yellowCards  Int?     @default(0)
+  penSaves     Int?     @default(0)
+  penMisses    Int?     @default(0)
+  savesTier1   Int?     @default(0)
+  savesTier2   Int?     @default(0)
+  passesTier1  Int?     @default(0)
+  passesTier2  Int?     @default(0)
+  tacklesTier1 Int?     @default(0)
+  tacklesTier2 Int?     @default(0)
+  shotsTier1   Int?     @default(0)
+  shotsTier2   Int?     @default(0)
+  motms        Int?     @default(0)
+  added        DateTime @db.DateTime(0)
+  updated      DateTime @db.DateTime(0)
+  players      players  @relation(fields: [playerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_season_players_players_playerId")
+
+  @@index([playerId], map: "playerId_idx")
+}
+
+model teams {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique(map: "uuid_UNIQUE") @db.VarChar(45)
+  name      String?   @db.VarChar(64)
+  shortName String?   @db.VarChar(64)
+  abbr      String?   @db.VarChar(3)
+  added     DateTime  @db.DateTime(0)
+  updated   DateTime  @db.DateTime(0)
+  players   players[]
+}
+
+model weekPlayers {
+  weekId       Int
+  playerId     Int
+  points       Int?     @default(0)
+  starts       Int?     @default(0)
+  subs         Int?     @default(0)
+  goals        Int?     @default(0)
+  ownGoals     Int?     @default(0)
+  assists      Int?     @default(0)
+  concedes     Int?     @default(0)
+  cleansheets  Int?     @default(0)
+  redCards     Int?     @default(0)
+  yellowCards  Int?     @default(0)
+  penSaves     Int?     @default(0)
+  penMisses    Int?     @default(0)
+  savesTier1   Int?     @default(0)
+  savesTier2   Int?     @default(0)
+  passesTier1  Int?     @default(0)
+  passesTier2  Int?     @default(0)
+  tacklesTier1 Int?     @default(0)
+  tacklesTier2 Int?     @default(0)
+  shotsTier1   Int?     @default(0)
+  shotsTier2   Int?     @default(0)
+  motms        Int?     @default(0)
+  added        DateTime @db.DateTime(0)
+  updated      DateTime @db.DateTime(0)
+  players      players  @relation(fields: [playerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_week_players_players_playerId")
+
+  @@id([weekId, playerId])
+  @@index([playerId], map: "playerId_idx")
+  @@index([weekId], map: "weekId_idx")
+}
+
+enum players_position {
+  GK
+  DEF
+  MID
+  FOR
+}
